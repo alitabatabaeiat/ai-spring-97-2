@@ -1,29 +1,41 @@
+from Course import Course
+
 class Database:
 
     # constructor
     def __init__(self):
         self.days = 0
         self.times = 0
+        self.courses = []
         self.happiness = []
         self.professors = []
         self.sadness = []
+        self.population = 0
 
     # For call to str(). Prints readable form
 
     def __str__(self):
-        res = 'Database:\n'
+        res = 'Database Class:\n'
         res += 'days = %i\n' % self.days
         res += 'times = %i\n' % self.times
+        res += self.str_courses()
         res += self.str_happiness()
         res += self.str_professors()
         res += self.str_sadness()
-
+        res += 'population = %i\n' % self.population
         return res
 
     # str
 
+    def str_courses(self):
+        res = 'courses:\n'
+        for i in range(self.get_courses_size()):
+            res += ('%i: ' % (i + 1)) + str(self.get_course(i)) # consider course ids starts from 1
+
+        return res
+
     def str_happiness(self):
-        return 'happines:\n' + ' '.join(str(i) for i in self.happiness) + '\n'
+        return 'happiness:\n' + ' '.join(str(i) for i in self.happiness) + '\n'
 
     def str_professors(self):
         res = 'professors:\n'
@@ -47,6 +59,13 @@ class Database:
     def set_times(self, times):
         self.times = times
 
+    def set_courses(self, courses_size):
+        for _ in range(courses_size):
+            self.courses.append(Course())
+
+    def add_professor_to_course(self, index, professor):
+        self.courses[index].add_professor(professor)
+
     def set_happiness(self, happiness):
         self.happiness = happiness
 
@@ -55,6 +74,9 @@ class Database:
 
     def set_sadness(self, sadness):
         self.sadness = sadness
+
+    def set_population(self, population):
+        self.population = population
 
     # getters
 
@@ -65,7 +87,13 @@ class Database:
         return self.times
 
     def get_courses(self):
-        return len(self.happiness)
+        return self.courses
+
+    def get_course(self, index):
+        return self.courses[index]
+
+    def get_courses_size(self):
+        return len(self.courses)
 
     def get_happiness(self):
         return self.happiness
@@ -78,3 +106,6 @@ class Database:
 
     def get_sadness(self):
         return self.sadness
+
+    def get_population(self):
+        return self.population
