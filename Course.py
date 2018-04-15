@@ -2,20 +2,21 @@ class Course:
 
     # constructor
 
-    def __init__(self):
-        self.professors = []
+    def __init__(self, id, professor):
+        self.id = id
+        self.professor = professor
 
     # For call to str(). Prints readable form
 
     def __str__(self):
-        return ' '.join(str(i) for i in self.professors) + '\n'
+        return 'Course class:\n' + ('id = %i\n' % self.id) + ('professor = %i\n' % self.professor)
+
+    # setters
+
+    def set_professor(self, professor):
+        self.professor = professor
 
     # getters
 
-    def get_professors(self):
-        return self.professors
-
-    # public methods
-
-    def add_professor(self, professor):
-        self.professors.append(professor)
+    def get_professor(self):
+        return self.professor

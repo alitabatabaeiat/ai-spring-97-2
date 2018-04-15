@@ -1,5 +1,3 @@
-from Course import Course
-
 class Database:
 
     # constructor
@@ -30,8 +28,8 @@ class Database:
     def str_courses(self):
         res = 'courses:\n'
         for i in range(self.get_courses_size()):
-            res += ('%i: ' % (i + 1)) + str(self.get_course(i)) # consider course ids starts from 1
-
+            res += ('%i: professor(s) -> ' % (i + 1)) + ' '.join(str(i) for i in self.get_course(i)) + '\n'
+            # consider course ids starts from 1
         return res
 
     def str_happiness(self):
@@ -59,12 +57,9 @@ class Database:
     def set_times(self, times):
         self.times = times
 
-    def set_courses(self, courses_size):
-        for _ in range(courses_size):
-            self.courses.append(Course())
-
-    def add_professor_to_course(self, index, professor):
-        self.courses[index].add_professor(professor)
+    def set_courses(self, courses):
+        for _ in range(courses):
+            self.courses.append([])
 
     def set_happiness(self, happiness):
         self.happiness = happiness
@@ -109,3 +104,8 @@ class Database:
 
     def get_population(self):
         return self.population
+
+    # public methods
+
+    def add_professor_to_course(self, index, professor):
+        self.courses[index].append(professor)
