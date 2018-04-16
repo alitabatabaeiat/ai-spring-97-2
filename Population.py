@@ -12,7 +12,17 @@ class Population:
     # For call to str(). Prints readable form
 
     def __str__(self):
-        res = 'Population Class:\n' + str(self.db) + str(self.chromosomes[0])
+        res = '-----------------------\n'
+        res += 'Population Class:\n' + self.str_chromosomes()
+        res += '-----------------------'
+        return res
+
+    # str
+
+    def str_chromosomes(self):
+        res = 'chromosomes:\n'
+        for chromosome in self.get_chromosomes():
+            res += str(chromosome)
         return res
 
     # setters

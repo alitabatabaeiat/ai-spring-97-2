@@ -1,3 +1,6 @@
+from Course import Course
+
+
 class Database:
 
     # constructor
@@ -9,6 +12,7 @@ class Database:
         self.professors = []
         self.sadness = []
         self.population = 0
+        self.repeat = 0  # number of repeats try to put a specific course on a slot
 
     # For call to str(). Prints readable form
 
@@ -21,15 +25,15 @@ class Database:
         res += self.str_professors()
         res += self.str_sadness()
         res += 'population = %i\n' % self.population
+        res += 'repeat = %i\n' % self.repeat
         return res
 
     # str
 
     def str_courses(self):
         res = 'courses:\n'
-        for i in range(self.get_courses_size()):
-            res += ('%i: professor(s) -> ' % (i + 1)) + ' '.join(str(i) for i in self.get_course(i)) + '\n'
-            # consider course ids starts from 1
+        for course in self.get_courses():
+            res += str(course)
         return res
 
     def str_happiness(self):
@@ -58,8 +62,8 @@ class Database:
         self.times = times
 
     def set_courses(self, courses):
-        for _ in range(courses):
-            self.courses.append([])
+        for i in range(courses):
+            self.courses.append(Course(i))
 
     def set_happiness(self, happiness):
         self.happiness = happiness
@@ -72,6 +76,9 @@ class Database:
 
     def set_population(self, population):
         self.population = population
+
+    def set_repeat(self, repeat):
+        self.repeat = repeat
 
     # getters
 
@@ -86,9 +93,6 @@ class Database:
 
     def get_course(self, index):
         return self.courses[index]
-
-    def get_courses_size(self):
-        return len(self.courses)
 
     def get_happiness(self):
         return self.happiness
@@ -105,7 +109,13 @@ class Database:
     def get_population(self):
         return self.population
 
+    def get_repeat(self):
+        return self.repeat
+
     # public methods
 
+    def courses_size(self):
+        return len(self.courses)
+
     def add_professor_to_course(self, index, professor):
-        self.courses[index].append(professor)
+        self.courses[index].add_professor(professor)
