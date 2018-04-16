@@ -8,9 +8,7 @@ class Database:
         self.days = 0
         self.times = 0
         self.courses = []
-        self.happiness = []
         self.professors = []
-        self.sadness = []
         self.population = 0
         self.repeat = 0  # number of repeats try to put a specific course on a slot
 
@@ -21,9 +19,7 @@ class Database:
         res += 'days = %i\n' % self.days
         res += 'times = %i\n' % self.times
         res += self.str_courses()
-        res += self.str_happiness()
         res += self.str_professors()
-        res += self.str_sadness()
         res += 'population = %i\n' % self.population
         res += 'repeat = %i\n' % self.repeat
         return res
@@ -36,9 +32,6 @@ class Database:
             res += str(course)
         return res
 
-    def str_happiness(self):
-        return 'happiness:\n' + ' '.join(str(i) for i in self.happiness) + '\n'
-
     def str_professors(self):
         res = 'professors:\n'
         for p in self.professors:
@@ -46,39 +39,32 @@ class Database:
 
         return res
 
-    def str_sadness(self):
-        res = 'sadness:\n'
-        for s in self.sadness:
-            res += ' '.join(str(i) for i in s) + '\n'
-
-        return res
-
     # setters
 
     def set_days(self, days):
         self.days = days
+        return self
 
     def set_times(self, times):
         self.times = times
+        return self
 
-    def set_courses(self, courses):
+    def set_courses(self, courses, happiness):
         for i in range(courses):
-            self.courses.append(Course(i))
-
-    def set_happiness(self, happiness):
-        self.happiness = happiness
+            self.courses.append(Course(i, happiness[i]))
+        return self
 
     def set_professors(self, professors):
         self.professors = professors
-
-    def set_sadness(self, sadness):
-        self.sadness = sadness
+        return self
 
     def set_population(self, population):
         self.population = population
+        return self
 
     def set_repeat(self, repeat):
         self.repeat = repeat
+        return self
 
     # getters
 
@@ -94,17 +80,8 @@ class Database:
     def get_course(self, index):
         return self.courses[index]
 
-    def get_happiness(self):
-        return self.happiness
-
-    def get_professors_number(self):
-        return len(self.professors)
-
     def get_professors(self):
         return self.professors
-
-    def get_sadness(self):
-        return self.sadness
 
     def get_population(self):
         return self.population
@@ -116,6 +93,9 @@ class Database:
 
     def courses_size(self):
         return len(self.courses)
+
+    def professors_size(self):
+        return len(self.professors)
 
     def add_professor_to_course(self, index, professor):
         self.courses[index].add_professor(professor)

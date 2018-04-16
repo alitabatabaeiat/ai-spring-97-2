@@ -63,10 +63,12 @@ class Chromosome:
     def set_gene(self, day, time, course, value):
         self.genes[day][time][course] = value
         self.fitness = 0
+        return self
 
     def set_slot(self, day, time, courses):
         self.genes[day][time] = courses
         self.fitness = 0
+        return self
 
     # getters
 

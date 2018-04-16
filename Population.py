@@ -29,6 +29,7 @@ class Population:
 
     def set_chromosome(self, index, chromosome):
         self.chromosomes[index] = chromosome
+        return self
 
     # getters
 
