@@ -90,7 +90,7 @@ class Schedule:
                     break
             self.remove_course(course)
 
-        self.get_fitness()
+        self.set_fitness()
         return self
 
     def get_professors_without_conflict_on_slot(self, course, slot):
