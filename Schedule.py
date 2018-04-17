@@ -14,6 +14,14 @@ class Schedule:
         self.fitness = 0
         self.classes = []
 
+    def check(self):
+        for i in range(self.classes_size()):
+            for j in range(self.classes_size()):
+                if i == j:
+                    break
+                if self.get_class(i).get_slot().is_equal_slot(self.get_class(j).get_slot()) and self.get_class(i).get_professor() == self.get_class(j).get_professor():
+                    print('CONFLICT')
+
     # For call to str(). Prints readable form
 
     def __str__(self):
@@ -64,6 +72,9 @@ class Schedule:
     def add_class(self, _class):
         self.classes.append(_class)
 
+    def classes_size(self):
+        return len(self.get_classes())
+
     def initialize(self):
         while len(self.courses) > 0:
             course = self.get_random_course()
@@ -83,10 +94,8 @@ class Schedule:
         professors = list(course.get_professors())
         for _class in self.get_classes():
             if _class.get_slot().is_equal_slot(slot):
-                for i in range(len(professors)):
-                    # remove each professor of the new course that is duplicate
-                    if _class.get_professor() == professors[i]:
-                        del professors[i]
+                # remove each professor of the new course that is duplicate
+                professors = [x for x in professors if x != _class.get_professor()]
         return professors
 
     def courses_size(self):

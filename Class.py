@@ -11,7 +11,7 @@ class Class:
     # For call to str(). Prints readable form
 
     def __str__(self):
-        return 'Class %i: day = %i - time = %i - professor = %i\n' %\
+        return 'Class %i:\tday = %i \ttime = %i \tprofessor = %i\n' %\
                (self.get_id(), self.get_slot().get_day(), self.get_slot().get_time(), self.get_professor())
 
     # setters

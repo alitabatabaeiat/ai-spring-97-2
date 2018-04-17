@@ -9,6 +9,10 @@ class Population:
         self.db = db
         self.schedules = []
 
+    def check(self):
+        for schedule in self.get_schedules():
+            schedule.check()
+
     # For call to str(). Prints readable form
 
     def __str__(self):
@@ -56,3 +60,4 @@ class Population:
     def generate(self):
         for i in range(self.get_population()):
             self.schedules.append(Schedule(self.db).initialize())
+        return self
