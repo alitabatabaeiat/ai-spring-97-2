@@ -2,25 +2,22 @@ class Class:
 
     # constructor
 
-    def __init__(self, _id):
+    def __init__(self, _id, course):
         self.id = _id
-        self.day = -1
-        self.time = -1
+        self.course = course
+        self.slot = None
         self.professor = -1
 
     # For call to str(). Prints readable form
 
     def __str__(self):
-        return 'Class Class:\n' + 'id = %i - day = %i - time = %i - professor = %i\n' % (self.id, self.day, self.time, self.professor)
+        return 'Class %i: day = %i - time = %i - professor = %i\n' %\
+               (self.get_id(), self.get_slot().get_day(), self.get_slot().get_time(), self.get_professor())
 
     # setters
 
-    def set_day(self, day):
-        self.day = day
-        return self
-
-    def set_time(self, time):
-        self.time = time
+    def set_slot(self, slot):
+        self.slot = slot
         return self
 
     def set_professor(self, professor):
@@ -32,11 +29,11 @@ class Class:
     def get_id(self):
         return self.id
 
-    def get_day(self):
-        return self.day
+    def get_course(self):
+        return self.course
 
-    def get_time(self):
-        return self.time
+    def get_slot(self):
+        return self.slot
 
     def get_professor(self):
         return self.professor

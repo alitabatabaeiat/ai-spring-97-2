@@ -1,4 +1,4 @@
-from Chromosome import Chromosome
+from Schedule import Schedule
 
 
 class Population:
@@ -7,28 +7,28 @@ class Population:
 
     def __init__(self, db):
         self.db = db
-        self.chromosomes = []
+        self.schedules = []
 
     # For call to str(). Prints readable form
 
     def __str__(self):
         res = '-----------------------\n'
-        res += 'Population Class:\n' + self.str_chromosomes()
+        res += 'Population:\n' + self.str_schedules()
         res += '-----------------------'
         return res
 
     # str
 
-    def str_chromosomes(self):
-        res = 'chromosomes:\n'
-        for chromosome in self.get_chromosomes():
-            res += str(chromosome)
+    def str_schedules(self):
+        res = 'schedules:\n'
+        for schedule in self.get_schedules():
+            res += str(schedule)
         return res
 
     # setters
 
-    def set_chromosome(self, index, chromosome):
-        self.chromosomes[index] = chromosome
+    def set_schedule(self, index, schedule):
+        self.schedules[index] = schedule
         return self
 
     # getters
@@ -36,18 +36,18 @@ class Population:
     def get_population(self):
         return self.db.get_population()
 
-    def get_chromosome(self, index):
-        return self.chromosomes[index]
+    def get_schedule(self, index):
+        return self.schedules[index]
 
-    def get_chromosomes(self):
-        return self.chromosomes
+    def get_schedules(self):
+        return self.schedules
 
     def get_fittest(self):
-        fittest = self.get_chromosome(0)
+        fittest = self.get_schedule(0)
 
-        for i in self.chromosomes:
+        for i in self.schedules:
             if fittest.get_fitness() < i.get_fitness():
-                fittest = self.get_chromosome(i)
+                fittest = self.get_schedule(i)
 
         return fittest
 
@@ -55,4 +55,4 @@ class Population:
 
     def generate(self):
         for i in range(self.get_population()):
-            self.chromosomes.append(Chromosome(self.db))
+            self.schedules.append(Schedule(self.db).initialize())

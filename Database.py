@@ -1,27 +1,24 @@
+import random
 from Course import Course
+from Slot import Slot
 
 
 class Database:
 
     # constructor
     def __init__(self):
-        self.days = 0
-        self.times = 0
+        self.slots = []
         self.courses = []
-        self.professors = []
         self.population = 0
-        self.repeat = 0  # number of repeats try to put a specific course on a slot
+        self.repeats = 0  # number of repeats try to put a specific course on a slot
 
     # For call to str(). Prints readable form
 
     def __str__(self):
         res = 'Database Class:\n'
-        res += 'days = %i\n' % self.days
-        res += 'times = %i\n' % self.times
         res += self.str_courses()
-        res += self.str_professors()
         res += 'population = %i\n' % self.population
-        res += 'repeat = %i\n' % self.repeat
+        res += 'repeats = %i\n' % self.repeats
         return res
 
     # str
@@ -32,21 +29,16 @@ class Database:
             res += str(course)
         return res
 
-    def str_professors(self):
-        res = 'professors:\n'
-        for p in self.professors:
-            res += ' '.join(str(i) for i in p) + '\n'
-
-        return res
-
     # setters
 
-    def set_days(self, days):
-        self.days = days
+    def set_slot(self, day, time):
+        self.slots.append(Slot(day, time))
         return self
 
-    def set_times(self, times):
-        self.times = times
+    def set_slots(self, days, times):
+        for day in range(days):
+            for time in range(times):
+                self.set_slot(day, time)
         return self
 
     def set_courses(self, courses, happiness):
@@ -54,25 +46,24 @@ class Database:
             self.courses.append(Course(i, happiness[i]))
         return self
 
-    def set_professors(self, professors):
-        self.professors = professors
-        return self
-
     def set_population(self, population):
         self.population = population
         return self
 
-    def set_repeat(self, repeat):
-        self.repeat = repeat
+    def set_repeats(self, repeats):
+        self.repeats = repeats
         return self
 
     # getters
 
-    def get_days(self):
-        return self.days
+    def get_slot(self, index):
+        return self.slots[index]
 
-    def get_times(self):
-        return self.times
+    def get_slots(self):
+        return self.slots
+
+    def get_random_slot(self):
+        return self.slots[random.randint(0, self.slots_size() - 1)]
 
     def get_courses(self):
         return self.courses
@@ -80,22 +71,22 @@ class Database:
     def get_course(self, index):
         return self.courses[index]
 
-    def get_professors(self):
-        return self.professors
+    def get_random_course(self):
+        return self.courses[random.randint(0, self.courses_size() - 1)]
 
     def get_population(self):
         return self.population
 
-    def get_repeat(self):
-        return self.repeat
+    def get_repeats(self):
+        return self.repeats
 
     # public methods
 
+    def slots_size(self):
+        return len(self.slots)
+
     def courses_size(self):
         return len(self.courses)
-
-    def professors_size(self):
-        return len(self.professors)
 
     def add_professor_to_course(self, index, professor):
         self.courses[index].add_professor(professor)

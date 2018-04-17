@@ -12,7 +12,8 @@ class Course:
 
     def __str__(self):
         return 'Course: ' + ('id = %i - ' % self.id) + ('happiness = %i - ' % self.happiness)\
-               + ('sadness = %i - ' % str(self.sadness)) + ('professors = %s' % str(self.professors)) + '\n'
+               + ('sadness = %s - ' % str(self.sadness))\
+               + ('professors = %s\n' % ' '.join(str(i) for i in self.get_professors()))
 
     # setters
 
@@ -47,30 +48,3 @@ class Course:
 
     def professors_size(self):
         return len(self.professors)
-
-
-class SlotCourse:
-
-    # constructor
-
-    def __init__(self, _id, professor):
-        self.id = _id
-        self.professor = professor
-
-    # For call to str(). Prints readable form
-
-    def __str__(self):
-        return 'SlotCourse class: ' + ('id = %i - ' % self.id) + ('professor = %i' % self.professor)
-
-    # setters
-
-    def set_professor(self, professor):
-        self.professor = professor
-
-    # getters
-
-    def get_id(self):
-        return self.id
-
-    def get_professor(self):
-        return self.professor
