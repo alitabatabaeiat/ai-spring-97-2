@@ -12,16 +12,7 @@ class Schedule:
         self.courses = deepcopy(self.db.get_courses())
         self.is_fitness_changed = True
         self.fitness = 0
-        self.num_of_conflicts = 0
         self.classes = []
-
-    def find_conflicts(self):
-        for i in range(self.classes_size()):
-            for j in range(self.classes_size()):
-                if i == j: continue
-                if self.get_class(i).get_slot().is_equal_slot(self.get_class(j).get_slot()) \
-                        and self.get_class(i).get_professor() == self.get_class(j).get_professor():
-                    self.num_of_conflicts += 1
 
     # For call to str(). Prints readable form
 
@@ -29,7 +20,6 @@ class Schedule:
         res = '-----------------------\n'
         res += 'Schedule:\n'
         res += '\tfitness = %i\n' % self.fitness
-        res += '\tnumber of conflicts = %i\n' % self.num_of_conflicts
         res += '\tclasses: \n%s\n' % self.str_classes()
         res += '-----------------------'
         return res
@@ -55,6 +45,11 @@ class Schedule:
         self.is_fitness_changed = True
         return self
 
+    def set_fitness(self):
+        if self.is_fitness_changed:
+            self.calculate_fitness()
+        return self
+
     # getters
 
     def get_classes(self):
@@ -69,6 +64,9 @@ class Schedule:
     def get_random_course(self):
         return self.courses[random.randint(0, self.courses_size() - 1)]
 
+    def get_fitness(self):
+        return self.fitness
+
     # public methods
 
     def add_class(self, _class):
@@ -76,6 +74,10 @@ class Schedule:
 
     def classes_size(self):
         return len(self.get_classes())
+
+    def initialize_empty(self, size):
+        self.classes = [None] * size
+        return self
 
     def initialize(self):
         while len(self.courses) > 0:
@@ -90,6 +92,7 @@ class Schedule:
                     break
             self.remove_course(course)
 
+        self.is_fitness_changed = True
         self.set_fitness()
         return self
 
@@ -107,21 +110,42 @@ class Schedule:
 
     def remove_course(self, course):
         self.courses.remove(course)
+        return self
 
-    def set_fitness(self):
-        if self.is_fitness_changed:
-            self.calculate_fitness()
-        return self.fitness
+    def remove_class(self, index):
+        del self.classes[index]
+        return self
 
     def calculate_fitness(self):
         self.fitness = 0
-        print(range(self.classes_size()))
         for i in range(self.classes_size()):
             # multiply 2 -> because sadness will calc two times
             self.fitness += 2 * self.get_class(i).get_course().get_happiness()
             for j in range(self.classes_size()):
-                if i == j: continue
+                if i == j:
+                    continue
                 if self.get_class(i).get_slot().is_equal_slot(self.get_class(j).get_slot()):
                     self.fitness -= self.get_class(i).get_course() \
-                        .get_sadness(self.get_class(j).get_course().get_id() - 1)  # ***sadness will calc two times
+                        .get_sadness(self.get_class(j).get_course().get_id() - 1)  # *** sadness will calc two times ***
         self.fitness /= 2  # fitness was multiplied
+        return self
+
+    def remove_conflicts(self):
+        i = 0
+        while i < self.classes_size():
+            flag = False
+            for j in range(self.classes_size()):
+                if i == j:
+                    continue
+                if self.get_class(i).get_id() == self.get_class(j).get_id():
+                    self.remove_class(random.randint(0, 1))
+                    flag = True
+                    break
+                if self.get_class(i).get_slot().is_equal_slot(self.get_class(j).get_slot()) \
+                        and self.get_class(i).get_professor() == self.get_class(j).get_professor():
+                    self.remove_class(random.randint(0, 1))
+                    flag = True
+                    break
+            if not flag:
+                i += 1
+        return  self

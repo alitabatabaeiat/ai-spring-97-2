@@ -1,4 +1,5 @@
 from Schedule import Schedule
+import operator
 
 
 class Population:
@@ -32,10 +33,13 @@ class Population:
     # setters
 
     def set_schedule(self, index, schedule):
-        self.schedules[index] = schedule
+        self.schedules[index] = schedule.set_fitness()
         return self
 
     # getters
+
+    def get_db(self):
+        return self.db
 
     def get_population(self):
         return self.db.get_population()
@@ -53,7 +57,7 @@ class Population:
             if fittest.get_fitness() < i.get_fitness():
                 fittest = self.get_schedule(i)
 
-        return fittest
+        return fittest.get_fitness()
 
     # public methods
 
@@ -61,3 +65,16 @@ class Population:
         for i in range(self.get_population()):
             self.schedules.append(Schedule(self.db).initialize())
         return self
+
+    def generate_empty(self, size):
+        self.schedules = [None] * size
+
+    def schedules_size(self):
+        return len(self.schedules)
+
+    def sort(self):
+        self.schedules.sort(key=operator.attrgetter('fitness'), reverse=True)
+        return self
+
+
+
