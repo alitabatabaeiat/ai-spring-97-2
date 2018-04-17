@@ -11,9 +11,9 @@ class Course:
     # For call to str(). Prints readable form
 
     def __str__(self):
-        return 'Course: ' + ('id = %i - ' % self.id) + ('happiness = %i - ' % self.happiness)\
-               + ('sadness = %s - ' % str(self.sadness))\
-               + ('professors = %s\n' % ' '.join(str(i) for i in self.get_professors()))
+        return 'Course: ' + ('id = %i - ' % self.id) + ('happiness = %i - ' % self.happiness) \
+               + ('sadness = %s - ' % str(self.sadness)) \
+               + ('professors = %s\n' % str(self.get_professors()))
 
     # setters
 

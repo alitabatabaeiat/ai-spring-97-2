@@ -1,5 +1,4 @@
 import random
-# import FitnessCalc
 from Class import Class
 from copy import deepcopy
 
@@ -11,16 +10,18 @@ class Schedule:
     def __init__(self, db):
         self.db = db
         self.courses = deepcopy(self.db.get_courses())
+        self.is_fitness_changed = True
         self.fitness = 0
+        self.num_of_conflicts = 0
         self.classes = []
 
-    def check(self):
+    def find_conflicts(self):
         for i in range(self.classes_size()):
             for j in range(self.classes_size()):
-                if i == j:
-                    break
-                if self.get_class(i).get_slot().is_equal_slot(self.get_class(j).get_slot()) and self.get_class(i).get_professor() == self.get_class(j).get_professor():
-                    print('CONFLICT')
+                if i == j: continue
+                if self.get_class(i).get_slot().is_equal_slot(self.get_class(j).get_slot()) \
+                        and self.get_class(i).get_professor() == self.get_class(j).get_professor():
+                    self.num_of_conflicts += 1
 
     # For call to str(). Prints readable form
 
@@ -28,6 +29,7 @@ class Schedule:
         res = '-----------------------\n'
         res += 'Schedule:\n'
         res += '\tfitness = %i\n' % self.fitness
+        res += '\tnumber of conflicts = %i\n' % self.num_of_conflicts
         res += '\tclasses: \n%s\n' % self.str_classes()
         res += '-----------------------'
         return res
@@ -50,7 +52,7 @@ class Schedule:
 
     def set_class(self, index, _class):
         self.classes[index] = _class
-        self.fitness = 0
+        self.is_fitness_changed = True
         return self
 
     # getters
@@ -87,6 +89,8 @@ class Schedule:
                     self.add_class(new_class)
                     break
             self.remove_course(course)
+
+        self.get_fitness()
         return self
 
     def get_professors_without_conflict_on_slot(self, course, slot):
@@ -104,8 +108,20 @@ class Schedule:
     def remove_course(self, course):
         self.courses.remove(course)
 
-    def get_fitness(self):
-        # if self.fitness == 0:
-        #     self.fitness = FitnessCalc.get_fitness(self)
-        # return self.fitness
-        return 1000
+    def set_fitness(self):
+        if self.is_fitness_changed:
+            self.calculate_fitness()
+        return self.fitness
+
+    def calculate_fitness(self):
+        self.fitness = 0
+        print(range(self.classes_size()))
+        for i in range(self.classes_size()):
+            # multiply 2 -> because sadness will calc two times
+            self.fitness += 2 * self.get_class(i).get_course().get_happiness()
+            for j in range(self.classes_size()):
+                if i == j: continue
+                if self.get_class(i).get_slot().is_equal_slot(self.get_class(j).get_slot()):
+                    self.fitness -= self.get_class(i).get_course() \
+                        .get_sadness(self.get_class(j).get_course().get_id() - 1)  # ***sadness will calc two times
+        self.fitness /= 2  # fitness was multiplied

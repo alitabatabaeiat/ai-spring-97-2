@@ -11,8 +11,6 @@ class Slot:
     def __str__(self):
         return 'Slot: day = %i - time = %i\n' % (self.get_day(), self.get_time())
 
-
-
     # getters
 
     def get_day(self):

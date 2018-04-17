@@ -8,8 +8,8 @@ def read_inputs():
     d, t = map(int, input().split())
     c = int(input())
     happiness = list(map(int, input().split()))
-    database.set_slots(d, t)\
-            .set_courses(c, happiness)
+    database.set_slots(d, t) \
+        .set_courses(c, happiness)
 
     p = int(input())
     for i in range(p):
@@ -28,9 +28,8 @@ def read_inputs():
 
 if __name__ == '__main__':
     db = read_inputs()
-    db.set_population(100)\
+    db.set_population(100) \
         .set_repeats(100)
     population = Population(db)
     population.generate()
     print(population)
-
