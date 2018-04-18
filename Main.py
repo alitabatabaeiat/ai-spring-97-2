@@ -3,12 +3,14 @@ import operator
 import random
 
 # constants
-POPULATION_SIZE = 50
+import time
+
+POPULATION_SIZE = 30
 REPEATS = 5
-CROSSOVER_RATE = 0.7
+CROSSOVER_RATE = 0.9
 MUTATION_RATE = 0.1
-TOURNAMENT_SIZE = 8
-NUM_OF_ELITE_SCHEDULES = 5
+TOURNAMENT_SIZE = 5
+NUM_OF_ELITE_SCHEDULES = 3
 
 # Global vars
 slots = []  # (day, time) -> list of slot tuples
@@ -101,10 +103,6 @@ def select_tournament_population(p):
     return tournament_population
 
 
-def mutate_population(p):
-    return p
-
-
 def crossover_schedule(schedule1, schedule2):
     new_schedule = [[], [], 0, True]
     min_size = len(schedule1[0])
@@ -136,7 +134,7 @@ def crossover_population(p):
 
 
 def evolve(p):
-    return mutate_population(crossover_population(p))
+    return crossover_population(p)
 
 
 def is_equal_slot(slot1, slot2):
@@ -248,12 +246,14 @@ def print_final_output(schedule):
 
 
 if __name__ == '__main__':
+    start = time.time()
     read_inputs()
     population = generate_population()
     sort(population)
+    generation = 1
     counter = 0
     max_fitness = population[0][2]
-    while counter < 10:
+    while time.time() - start < 120 and counter < 2000:
         population = evolve(population)
         for schedule in population:
             calculate_fitness(schedule)
@@ -262,8 +262,11 @@ if __name__ == '__main__':
         if fitness - max_fitness < 50:
             counter += 1
         else:
+            print(counter)
             counter = 0
         if fitness > max_fitness:
             max_fitness = fitness
-
+        # print(fitness)
+        generation += 1
+    print(generation)
     print_final_output(population[0])
