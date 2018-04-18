@@ -5,12 +5,11 @@ import random
 # constants
 import time
 
-POPULATION_SIZE = 30
-REPEATS = 5
-CROSSOVER_RATE = 0.9
-MUTATION_RATE = 0.1
-TOURNAMENT_SIZE = 5
-NUM_OF_ELITE_SCHEDULES = 3
+POPULATION_SIZE = 100
+REPEATS = 3
+CROSSOVER_RATE = 0.7
+TOURNAMENT_SIZE = 10
+NUM_OF_ELITE_SCHEDULES = 10
 
 # Global vars
 slots = []  # (day, time) -> list of slot tuples
@@ -62,7 +61,6 @@ def has_conflict(schedule, class1):
 
 
 def add_new_classes(schedule):
-    copy_s = copy.deepcopy(schedule)
     schedule[1] = copy.deepcopy(courses)
     for i in range(len(schedule[0])):
         for j in range(len(schedule[1])):
@@ -80,7 +78,6 @@ def add_new_classes(schedule):
                 schedule[0].append(new_class)  # add new class to schedule list
                 break
         schedule[1].remove(course)  # remove this course from courses of this schedule
-    calculate_fitness(schedule)
     return schedule
 
 
@@ -116,7 +113,7 @@ def crossover_population(p):
         if random.uniform(0, 1) < CROSSOVER_RATE:
             schedule1 = sort(select_tournament_population(p))[0]
             schedule2 = sort(select_tournament_population(p))[0]
-            new_population.append(add_new_classes(crossover_schedule(schedule1, schedule2)))
+            new_population.append(calculate_fitness(add_new_classes(crossover_schedule(schedule1, schedule2))))
         else:
             new_population.append(p[i])
     return new_population
@@ -154,8 +151,8 @@ def generate_schedule():
                 schedule[0].append(new_class)  # add new class to schedule list
                 break
         schedule[1].remove(course)  # remove this course from courses of this schedule
-    calculate_fitness(schedule)  # calculate fitness of this schedule
-    return schedule
+    return calculate_fitness(schedule)  # calculate fitness of this schedule
+
 
 
 def generate_population():
@@ -180,6 +177,7 @@ def calculate_fitness(schedule):
             if is_equal_slot(c1[2], c2[2]):
                 fitness -= c1[1][3][c2[0] - 1]  # *** sadness will calc two times ***
     schedule[2] = fitness / 2  # fitness was multiplied
+    return schedule
 
 
 def sort(p):
@@ -241,15 +239,17 @@ if __name__ == '__main__':
     generation = 1
     counter = 0
     max_fitness = population[0][2]
-    while time.time() - start < 120 and counter < 1000:
+    print('fitness of fittest schedule of initial population: %i' % max_fitness)
+    while time.time() - start < 120 and counter < 700:
         population = evolve(population)
         sort(population)
         fitness = population[0][2]
-        if fitness - max_fitness < 50:
+        if fitness - max_fitness < 30:
             counter += 1
         else:
             counter = 0
         if fitness > max_fitness:
             max_fitness = fitness
         generation += 1
+    print('max_fitness after %isec and %i generation: %i' % (time.time() - start, generation, max_fitness))
     print_final_output(population[0])
