@@ -81,12 +81,10 @@ class Main:
             if fitness - max_fitness < 50:
                 counter += 1
             else:
-                print(counter)
                 counter = 0
             if fitness > max_fitness:
                 max_fitness = fitness
             generation += 1
-        print(generation)
         Main.print_best_schedule(population.get_fittest())
 
     @staticmethod
