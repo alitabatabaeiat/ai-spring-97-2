@@ -228,7 +228,6 @@ def str_class(c):
 
 
 def fill_answer(schedule):
-    print(str_schedule(schedule))
     for c in schedule[0]:
         answer[c[2][0]][c[2][1]].append((c[0], c[3]))
 
@@ -262,11 +261,8 @@ if __name__ == '__main__':
         if fitness - max_fitness < 50:
             counter += 1
         else:
-            print(counter)
             counter = 0
         if fitness > max_fitness:
             max_fitness = fitness
-        # print(fitness)
         generation += 1
-    print(generation)
     print_final_output(population[0])
