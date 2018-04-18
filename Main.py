@@ -253,7 +253,7 @@ if __name__ == '__main__':
     generation = 1
     counter = 0
     max_fitness = population[0][2]
-    while time.time() - start < 120 and counter < 2000:
+    while time.time() - start < 120 and counter < 1200:
         population = evolve(population)
         for schedule in population:
             calculate_fitness(schedule)
