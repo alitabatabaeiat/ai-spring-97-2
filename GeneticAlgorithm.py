@@ -22,57 +22,39 @@ class GeneticAlgorithm:
     # public methods
 
     def evolve(self, population):
-        return self.mutate_population(self.crossover_population(population))
+        return self.crossover_population(population)
 
     def crossover_population(self, population):
         crossover_population = Population(self.get_db())
-        crossover_population.generate_empty(self.get_db().get_population())
+        # crossover_population.generate_empty(self.get_db().get_population())
         for i in range(0, self.NUM_OF_ELITE_SCHEDULES):
-            crossover_population.set_schedule(i, population.get_schedule(i))
+            crossover_population.add_schedule(population.get_schedule(i))
         for i in range(self.NUM_OF_ELITE_SCHEDULES, population.schedules_size()):
             if random.uniform(0, 1) < self.CROSSOVER_RATE:
                 schedule1 = self.select_tournament_population(population).sort().get_schedule(0)
                 schedule2 = self.select_tournament_population(population).sort().get_schedule(0)
-                crossover_population.set_schedule(i, self.crossover_schedule(schedule1, schedule2))
+                crossover_population.add_schedule(self.crossover_schedule(schedule1, schedule2))
             else:
-                crossover_population.set_schedule(i, population.get_schedule(i))
+                crossover_population.add_schedule(population.get_schedule(i))
         return crossover_population
 
     def crossover_schedule(self, schedule1, schedule2):
         crossover_schedule = Schedule(self.get_db())
         min_size = schedule1.classes_size()
-        if min_size > schedule2.classes_size():
+        max_size = schedule1.classes_size()
+        if max_size < schedule2.classes_size():
+            max_size = schedule2.classes_size()
+        else:
             min_size = schedule2.classes_size()
-        crossover_schedule.initialize_empty(min_size)
-        for i in range(min_size):
-            if random.uniform(0, 1) < 0.5:
-                crossover_schedule.set_class(i, schedule1.get_class(i))
+        for i in range(max_size):
+            if (random.uniform(0, 1) < 0.5 and i < min_size) or (min_size <= i < schedule1.classes_size()):
+                crossover_schedule.add_class(schedule1.get_class(i))
             else:
-                crossover_schedule.set_class(i, schedule2.get_class(i))
-        return crossover_schedule.remove_conflicts()
-
-    def mutate_population(self, population):
-        mutate_population = Population(self.get_db())
-        mutate_population.generate_empty(self.get_db().get_population())
-        for i in range(0, self.NUM_OF_ELITE_SCHEDULES):
-            mutate_population.set_schedule(i, population.get_schedule(i))
-        for i in range(self.NUM_OF_ELITE_SCHEDULES, population.schedules_size()):
-                mutate_population.set_schedule(i, self.mutate_schedule(population.get_schedule(i)))
-        return mutate_population
-
-    def mutate_schedule(self, mutate_schedule):
-        schedule = Schedule(self.get_db()).initialize()
-        min_size = schedule.classes_size()
-        if min_size > mutate_schedule.classes_size():
-            min_size = mutate_schedule.classes_size()
-        for i in range(min_size):
-            if random.uniform(0, 1) < self.MUTATION_RATE:
-                mutate_schedule.set_class(i, schedule.get_class(i))
-        return mutate_schedule.remove_conflicts()
+                crossover_schedule.add_class(schedule2.get_class(i))
+        return crossover_schedule.remove_conflicts().remove_exists_courses().fill_schedule().calculate_fitness()
 
     def select_tournament_population(self, population):
         tournament_population = Population(self.get_db())
-        tournament_population.generate_empty(self.TOURNAMENT_SIZE)
         for i in range(self.TOURNAMENT_SIZE):
-            tournament_population.set_schedule(i, population.get_schedule(random.randint(0, population.schedules_size() - 1)))
+            tournament_population.add_schedule(population.get_schedule(random.randint(0, population.schedules_size() - 1)))
         return tournament_population

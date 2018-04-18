@@ -51,23 +51,17 @@ class Population:
         return self.schedules
 
     def get_fittest(self):
-        fittest = self.get_schedule(0)
-
-        for i in self.schedules:
-            if fittest.get_fitness() < i.get_fitness():
-                fittest = self.get_schedule(i)
-
-        return fittest.get_fitness()
+        return self.sort().get_schedule(0)
 
     # public methods
 
     def generate(self):
         for i in range(self.get_population()):
-            self.schedules.append(Schedule(self.db).initialize())
+            self.schedules.append(Schedule(self.db).fill_schedule().calculate_fitness())
         return self
 
-    def generate_empty(self, size):
-        self.schedules = [None] * size
+    def add_schedule(self, schedule):
+        self.schedules.append(schedule)
 
     def schedules_size(self):
         return len(self.schedules)

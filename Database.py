@@ -90,3 +90,17 @@ class Database:
 
     def add_professor_to_course(self, index, professor):
         self.courses[index].add_professor(professor)
+        return self
+
+    def remove_course(self, i):
+        del self.courses[i]
+        return self
+
+    def remove_courses_without_professor(self):
+        i = 0
+        while i < self.courses_size():
+            if self.get_course(i).professors_size() == 0:
+                self.remove_course(i)
+            else:
+                i += 1
+        return self

@@ -61,6 +61,9 @@ class Schedule:
     def get_courses(self):
         return self.courses
 
+    def get_course(self, index):
+        return self.courses[index]
+
     def get_random_course(self):
         return self.courses[random.randint(0, self.courses_size() - 1)]
 
@@ -75,11 +78,7 @@ class Schedule:
     def classes_size(self):
         return len(self.get_classes())
 
-    def initialize_empty(self, size):
-        self.classes = [None] * size
-        return self
-
-    def initialize(self):
+    def fill_schedule(self):
         while len(self.courses) > 0:
             course = self.get_random_course()
             for _ in range(self.db.get_repeats()):
@@ -93,7 +92,6 @@ class Schedule:
             self.remove_course(course)
 
         self.is_fitness_changed = True
-        self.set_fitness()
         return self
 
     def get_professors_without_conflict_on_slot(self, course, slot):
@@ -148,4 +146,14 @@ class Schedule:
                     break
             if not flag:
                 i += 1
-        return  self
+        return self
+
+    def remove_exists_courses(self):
+        for i in range(self.classes_size()):
+            j = 0
+            while j < self.courses_size():
+                if self.get_class(i).get_id() == self.get_course(j).get_id():
+                    del self.courses[j]
+                else:
+                    j += 1
+        return self
