@@ -54,7 +54,15 @@ def read_inputs():
             i += 1
 
 
+def has_conflict(schedule, class1):
+    for class2 in schedule[0]:
+        if class1[0] == class2[0] or (is_equal_slot(class1[2], class2[2]) and class1[3] == class2[3]):
+            return True
+    return False
+
+
 def add_new_classes(schedule):
+    copy_s = copy.deepcopy(schedule)
     schedule[1] = copy.deepcopy(courses)
     for i in range(len(schedule[0])):
         for j in range(len(schedule[1])):
@@ -72,27 +80,7 @@ def add_new_classes(schedule):
                 schedule[0].append(new_class)  # add new class to schedule list
                 break
         schedule[1].remove(course)  # remove this course from courses of this schedule
-    return schedule
-
-
-def remove_conflicts(schedule):
-    i = 0
-    while i < len(schedule[0]):
-        flag = False
-        for j in range(len(schedule[0])):
-            if i == j:
-                continue
-            if schedule[0][i][0] == schedule[0][j][0]:
-                del schedule[0][random.randint(0, 1)]
-                flag = True
-                break
-            if is_equal_slot(schedule[0][i][2], schedule[0][j][2]) \
-                    and schedule[0][i][3] == schedule[0][j][3]:
-                del schedule[0][random.randint(0, 1)]
-                flag = True
-                break
-        if not flag:
-            i += 1
+    calculate_fitness(schedule)
     return schedule
 
 
@@ -113,10 +101,11 @@ def crossover_schedule(schedule1, schedule2):
         min_size = len(schedule2[0])
     for i in range(max_size):
         if (random.uniform(0, 1) < 0.5 and i < min_size) or (min_size <= i < len(schedule1[0])):
-            new_schedule[0].append(schedule1[0][i])
-        else:
+            if not has_conflict(new_schedule, schedule1[0][i]):
+                new_schedule[0].append(schedule1[0][i])
+        elif not has_conflict(new_schedule, schedule2[0][i]):
             new_schedule[0].append(schedule2[0][i])
-    return remove_conflicts(new_schedule)
+    return new_schedule
 
 
 def crossover_population(p):
@@ -252,10 +241,8 @@ if __name__ == '__main__':
     generation = 1
     counter = 0
     max_fitness = population[0][2]
-    while time.time() - start < 120 and counter < 1200:
+    while time.time() - start < 120 and counter < 1000:
         population = evolve(population)
-        for schedule in population:
-            calculate_fitness(schedule)
         sort(population)
         fitness = population[0][2]
         if fitness - max_fitness < 50:
