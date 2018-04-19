@@ -3,7 +3,6 @@ import operator
 import random
 import time
 
-
 # constants
 
 POPULATION_SIZE = 100
@@ -147,7 +146,6 @@ def generate_schedule():
     return calculate_fitness(schedule)  # calculate fitness of this schedule
 
 
-
 def generate_population():
     new_population = []  # list of schedules
     for i in range(POPULATION_SIZE):
@@ -226,6 +224,12 @@ def print_final_output(schedule):
 
 if __name__ == '__main__':
     start = time.time()
+    print('population size = %i\nrepeats = %i\ncrossover rate = %i\ntournament size = %i\nnumber of elite schedules = '
+          '%i\ngenerations with little diffrence = %i\nfitness diffrence = '
+          '%i\n--------------------------------------------------------' % (POPULATION_SIZE, REPEATS, CROSSOVER_RATE,
+                                                                            TOURNAMENT_SIZE, NUM_OF_ELITE_SCHEDULES,
+                                                                            GENERATION_WITH_LITTLE_DIFFERENCE,
+                                                                            FITNESS_DIFFERENCE))
     read_inputs()
     population = generate_population()
     sort(population)
