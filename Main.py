@@ -237,7 +237,7 @@ if __name__ == '__main__':
     counter = 0
     max_fitness = population[0][2]
     print('fitness of fittest schedule of initial population: %i' % max_fitness)
-    while time.time() - start < 120:
+    while time.time() - start < 120 and counter < GENERATION_WITH_LITTLE_DIFFERENCE:
         population = evolve(population)
         sort(population)
         fitness = population[0][2]
