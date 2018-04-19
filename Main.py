@@ -1,15 +1,18 @@
 import copy
 import operator
 import random
-
-# constants
 import time
 
+
+# constants
+
 POPULATION_SIZE = 100
-REPEATS = 3
+REPEATS = 5
 CROSSOVER_RATE = 0.7
-TOURNAMENT_SIZE = 10
-NUM_OF_ELITE_SCHEDULES = 10
+TOURNAMENT_SIZE = int(25 * POPULATION_SIZE / 100)
+NUM_OF_ELITE_SCHEDULES = int(POPULATION_SIZE / 10)
+GENERATION_WITH_LITTLE_DIFFERENCE = 700
+FITNESS_DIFFERENCE = 30
 
 # Global vars
 slots = []  # (day, time) -> list of slot tuples
@@ -61,12 +64,6 @@ def has_conflict(schedule, class1):
 
 
 def add_new_classes(schedule):
-    schedule[1] = copy.deepcopy(courses)
-    for i in range(len(schedule[0])):
-        for j in range(len(schedule[1])):
-            if schedule[0][i][0] == schedule[1][j][0]:
-                del schedule[1][j]
-                break
     while len(schedule[1]) > 0:
         course = schedule[1][random.randint(0, len(schedule[1]) - 1)]
         for _ in range(REPEATS):
@@ -89,19 +86,15 @@ def select_tournament_population(p):
 
 
 def crossover_schedule(schedule1, schedule2):
-    new_schedule = [[], [], 0, True]
-    min_size = len(schedule1[0])
-    max_size = len(schedule1[0])
-    if max_size < len(schedule2[0]):
-        max_size = len(schedule2[0])
-    else:
-        min_size = len(schedule2[0])
-    for i in range(max_size):
-        if (random.uniform(0, 1) < 0.5 and i < min_size) or (min_size <= i < len(schedule1[0])):
-            if not has_conflict(new_schedule, schedule1[0][i]):
-                new_schedule[0].append(schedule1[0][i])
-        elif not has_conflict(new_schedule, schedule2[0][i]):
-            new_schedule[0].append(schedule2[0][i])
+    new_schedule = [[], copy.deepcopy(courses), 0]
+    classes = copy.deepcopy(schedule1[0]) + copy.deepcopy(schedule2[0])
+    i = 0
+    while i < len(classes):
+        random_class = classes[random.randint(0, len(classes) - 1)]
+        if not has_conflict(new_schedule, random_class):
+            new_schedule[0].append(random_class)
+            new_schedule[1].remove(random_class[1])
+        classes.remove(random_class)
     return new_schedule
 
 
@@ -138,8 +131,8 @@ def get_professors_without_conflict_on_slot(schedule, course, slot):
 
 
 def generate_schedule():
-    # [classes, courses, fitness, is_fitness_changed] -> list of properties needed for each class
-    schedule = [[], copy.deepcopy(courses), 0, True]
+    # [classes, courses, fitness] -> list of properties needed for each class
+    schedule = [[], copy.deepcopy(courses), 0]
     while len(schedule[1]) > 0:
         course = schedule[1][random.randint(0, len(schedule[1]) - 1)]
         for _ in range(REPEATS):
@@ -240,11 +233,11 @@ if __name__ == '__main__':
     counter = 0
     max_fitness = population[0][2]
     print('fitness of fittest schedule of initial population: %i' % max_fitness)
-    while time.time() - start < 120 and counter < 700:
+    while time.time() - start < 120:
         population = evolve(population)
         sort(population)
         fitness = population[0][2]
-        if fitness - max_fitness < 30:
+        if fitness - max_fitness < FITNESS_DIFFERENCE:
             counter += 1
         else:
             counter = 0
